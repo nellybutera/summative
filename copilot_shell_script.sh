@@ -1,41 +1,41 @@
 #!/bin/bash
 
-# Prompt the user for the same name they used when creating the environment
-read -p "Enter the same name you used to create your reminder directory: " username
+# Ask for user-specific folder suffix
+read -p "Enter the name you used to create your folder (e.g., nelly): " user_id
 
-# Construct the full directory name
-APP_DIR="submission_reminder_$username"
+# Assemble full path to environment
+env_folder="submission_reminder_$user_id"
 
-# Confirm the directory exists
-if [[ ! -d "$APP_DIR" ]]; then
-  echo "❌ Directory '$APP_DIR' does not exist."
+# Validate existence
+if [[ ! -d "$env_folder" ]]; then
+  echo "Error: Folder '$env_folder' doesn't exist."
   exit 1
 fi
 
-# Prompt for new assignment name
-read -p "Enter the new assignment name: " new_assignment
+# Get the new assignment title
+read -p "Type the new assignment name: " assignment_name
 
-# Path to config file
-CONFIG_FILE="$APP_DIR/config/config.env"
+# Target config file
+env_file="$env_folder/configuration/config.env"
 
-# Ensure config.env exists
-if [[ ! -f "$CONFIG_FILE" ]]; then
-  echo "❌ config.env not found at $CONFIG_FILE"
+# Confirm config file is in place
+if [[ ! -f "$env_file" ]]; then
+  echo "Missing config file at $env_file"
   exit 1
 fi
 
-# Replace ASSIGNMENT value
-sed -i "s/^ASSIGNMENT=.*/ASSIGNMENT=\"$new_assignment\"/" "$CONFIG_FILE"
+# Perform replacement
+sed -i "s/^ASSIGNMENT=.*/ASSIGNMENT=\"$assignment_name\"/" "$env_file"
 
-echo "✅ ASSIGNMENT updated to: $new_assignment"
-echo "--------------------------------------------"
+echo "Assignment successfully changed to: $assignment_name"
+echo "Launching updated reminder check..."
 
-# Run the startup script
-STARTUP_SCRIPT="$APP_DIR/startup.sh"
+# Launch app
+launch_script="$env_folder/startup.sh"
 
-if [[ ! -f "$STARTUP_SCRIPT" ]]; then
-  echo "❌ startup.sh not found at $STARTUP_SCRIPT"
+if [[ ! -f "$launch_script" ]]; then
+  echo "Startup script not found at $launch_script"
   exit 1
 fi
 
-bash "$STARTUP_SCRIPT"
+bash "$launch_script"

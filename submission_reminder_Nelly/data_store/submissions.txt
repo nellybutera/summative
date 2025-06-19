@@ -7,5 +7,5 @@ Grace, Shell Navigation, not submitted
 Lina, Shell Navigation, submitted
 Ali, Shell Navigation, not submitted
 Fahad, Shell Navigation, not submitted
-Khalid, Git, not submitted
-Zara, Shell Navigation, submitted
+Brian, Git, not submitted
+Yasmin, Shell Navigation, submitted
