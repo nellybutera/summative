@@ -1,41 +1,41 @@
 #!/bin/bash
 
-# Ask for user-specific folder suffix
-read -p "Enter the name you used to create your folder (e.g., nelly): " user_id
+# Ask user for the name used in folder creation
+read -p "Enter your name (as used in the directory name): " user_id
 
-# Assemble full path to environment
-env_folder="submission_reminder_$user_id"
+# Reconstruct full folder name
+folder="submission_reminder_$user_id"
 
-# Validate existence
-if [[ ! -d "$env_folder" ]]; then
-  echo "Error: Folder '$env_folder' doesn't exist."
+# Confirm the folder exists
+if [[ ! -d "$folder" ]]; then
+  echo "Directory '$folder' not found."
   exit 1
 fi
 
-# Get the new assignment title
-read -p "Type the new assignment name: " assignment_name
+# Ask for new assignment title
+read -p "Enter new assignment name: " new_task
 
-# Target config file
-env_file="$env_folder/configuration/config.env"
+# Path to config file
+config_path="$folder/config/config.env"
 
-# Confirm config file is in place
-if [[ ! -f "$env_file" ]]; then
-  echo "Missing config file at $env_file"
+# Check if config file is present
+if [[ ! -f "$config_path" ]]; then
+  echo "config.env not found at $config_path"
   exit 1
 fi
 
-# Perform replacement
-sed -i "s/^ASSIGNMENT=.*/ASSIGNMENT=\"$assignment_name\"/" "$env_file"
+# Update ASSIGNMENT value using sed
+sed -i "s/^ASSIGNMENT=.*/ASSIGNMENT=\"$new_task\"/" "$config_path"
 
-echo "Assignment successfully changed to: $assignment_name"
-echo "Launching updated reminder check..."
+echo "Assignment updated to: $new_task"
+echo "Running the updated reminder script..."
 
-# Launch app
-launch_script="$env_folder/startup.sh"
+# Path to startup script
+startup_script="$folder/startup.sh"
 
-if [[ ! -f "$launch_script" ]]; then
-  echo "Startup script not found at $launch_script"
+if [[ ! -f "$startup_script" ]]; then
+  echo "startup.sh not found in $folder"
   exit 1
 fi
 
-bash "$launch_script"
+bash "$startup_script"

@@ -2,14 +2,13 @@
 
 cd "$(dirname "$0")"
 
-# Load configuration and helper script
-source ./configuration/config.env
-source ./helpers/functions.sh
+source ./config/config.env
+source ./modules/functions.sh
 
-submissions_file="./data_store/submissions.txt"
+submission_data="./assets/submissions.txt"
 
-echo "Assignment in focus: $ASSIGNMENT"
-echo "Time left: $DAYS_REMAINING days"
-echo "--------------------------------"
+echo "Assignment: $ASSIGNMENT"
+echo "Remaining days: $DAYS_REMAINING"
+echo "-------------------------------"
 
-check_submissions "$submissions_file"
+check_submissions "$submission_data"

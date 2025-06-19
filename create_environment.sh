@@ -1,30 +1,30 @@
 #!/bin/bash
 
-# Ask for the student's name to personalize the folder
-echo "Please enter your name:"
-read student_name
+# Ask for your name
+echo "Please type your name:"
+read user_name
 
-# Define project folder
-project_root="submission_reminder_${student_name}"
+# Define root folder
+project_folder="submission_reminder_${user_name}"
 
-# Create necessary directories
-mkdir -p "$project_root"/{app_code,helpers,data_store,configuration}
+# Create directory structure
+mkdir -p "$project_folder"/{app,modules,assets,config}
 
-# Create config.env file
-cat << EOF > "$project_root/configuration/config.env"
-# Configuration settings
+# Generate config.env
+cat << EOF > "$project_folder/config/config.env"
+# Assignment settings
 ASSIGNMENT="Shell Navigation"
 DAYS_REMAINING=2
 EOF
 
-# Create functions.sh script
-cat << 'EOF' > "$project_root/helpers/functions.sh"
+# Generate functions.sh
+cat << 'EOF' > "$project_folder/modules/functions.sh"
 #!/bin/bash
 
-# Check who hasn't submitted based on assignment
+# Checks for students with pending submissions
 function check_submissions {
-    local input_file=$1
-    echo "Processing file: $input_file"
+    local file=$1
+    echo "Checking file: $file"
 
     while IFS=, read -r student task status; do
         student=$(echo "$student" | xargs)
@@ -34,63 +34,61 @@ function check_submissions {
         if [[ "$task" == "$ASSIGNMENT" && "$status" == "not submitted" ]]; then
             echo "$student has not submitted the $ASSIGNMENT task."
         fi
-    done < <(tail -n +2 "$input_file")
+    done < <(tail -n +2 "$file")
 }
 EOF
 
-# Create reminder.sh script
-cat << 'EOF' > "$project_root/app_code/reminder.sh"
+# Generate reminder.sh
+cat << 'EOF' > "$project_folder/app/reminder.sh"
 #!/bin/bash
 
-# Load config and functions
-source ../configuration/config.env
-source ../helpers/functions.sh
+# Load settings and helper functions
+source ../config/config.env
+source ../modules/functions.sh
 
-# File location
-submissions_file="../data_store/submissions.txt"
+submissions_file="../assets/submissions.txt"
 
-echo "Current Assignment: $ASSIGNMENT"
-echo "Remaining Days: $DAYS_REMAINING"
-echo "--------------------------------"
+echo "Assignment: $ASSIGNMENT"
+echo "Days left: $DAYS_REMAINING"
+echo "-------------------------"
 
 check_submissions "$submissions_file"
 EOF
 
-# Create startup.sh script
-cat << 'EOF' > "$project_root/startup.sh"
+# Generate startup.sh
+cat << 'EOF' > "$project_folder/startup.sh"
 #!/bin/bash
 
 cd "$(dirname "$0")"
 
-# Load configuration and helper script
-source ./configuration/config.env
-source ./helpers/functions.sh
+source ./config/config.env
+source ./modules/functions.sh
 
-submissions_file="./data_store/submissions.txt"
+submission_data="./assets/submissions.txt"
 
-echo "Assignment in focus: $ASSIGNMENT"
-echo "Time left: $DAYS_REMAINING days"
-echo "--------------------------------"
+echo "Assignment: $ASSIGNMENT"
+echo "Remaining days: $DAYS_REMAINING"
+echo "-------------------------------"
 
-check_submissions "$submissions_file"
+check_submissions "$submission_data"
 EOF
 
-# Create a sample submissions.txt
-cat << EOF > "$project_root/data_store/submissions.txt"
+# Generate submissions.txt
+cat << EOF > "$project_folder/assets/submissions.txt"
 student, assignment, submission status
 Chinemerem, Shell Navigation, not submitted
 Chiagoziem, Git, submitted
 Divine, Shell Navigation, not submitted
 Anissa, Shell Basics, submitted
 Grace, Shell Navigation, not submitted
-Lina, Shell Navigation, submitted
 Ali, Shell Navigation, not submitted
 Fahad, Shell Navigation, not submitted
 Brian, Git, not submitted
 Yasmin, Shell Navigation, submitted
+Noor, Shell Navigation, not submitted
 EOF
 
-# Set executable permissions
-find "$project_root" -name "*.sh" -exec chmod +x {} \;
+# Make all shell scripts executable
+find "$project_folder" -name "*.sh" -exec chmod +x {} \;
 
-echo "Environment successfully created in: $project_root"
+echo "Setup complete. Project folder created: $project_folder"
